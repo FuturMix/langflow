@@ -160,6 +160,7 @@ async def list_deployments_page(
     limit: int,
     flow_version_ids: list[UUID] | None = None,
     project_id: UUID | None = None,
+    names: list[str] | None = None,
 ) -> list[tuple[Deployment, int, list[tuple[UUID, str | None]]]]:
     """Return a page of deployments with attachment counts and matched attachments.
 
@@ -196,6 +197,8 @@ async def list_deployments_page(
     )
     if project_id is not None:
         stmt = stmt.where(Deployment.project_id == project_id)
+    if names:
+        stmt = stmt.where(col(Deployment.name).in_(names))
     if flow_version_ids:
         matched_deployments_subquery = (
             select(FlowVersionDeploymentAttachment.deployment_id)
@@ -254,6 +257,7 @@ async def count_deployments_by_provider(
     deployment_provider_account_id: UUID,
     flow_version_ids: list[UUID] | None = None,
     project_id: UUID | None = None,
+    names: list[str] | None = None,
 ) -> int:
     stmt = select(func.count(Deployment.id)).where(
         Deployment.user_id == user_id,
@@ -261,6 +265,8 @@ async def count_deployments_by_provider(
     )
     if project_id is not None:
         stmt = stmt.where(Deployment.project_id == project_id)
+    if names:
+        stmt = stmt.where(col(Deployment.name).in_(names))
     if flow_version_ids:
         matched_deployments_subquery = (
             select(FlowVersionDeploymentAttachment.deployment_id)
