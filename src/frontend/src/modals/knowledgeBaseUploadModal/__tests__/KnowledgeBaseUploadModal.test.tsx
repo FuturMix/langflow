@@ -369,6 +369,13 @@ describe("KnowledgeBaseUploadModal", () => {
           name: "TestKnowledgeBase",
           embedding_provider: "OpenAI",
           embedding_model: "text-embedding-3-small",
+          model_selection: {
+            id: "text-embedding-3-small",
+            name: "text-embedding-3-small",
+            icon: "OpenAI",
+            provider: "OpenAI",
+            metadata: { model_type: "embeddings" },
+          },
           column_config: [
             { column_name: "text", vectorize: true, identifier: true },
           ],
