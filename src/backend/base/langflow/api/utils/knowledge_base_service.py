@@ -33,6 +33,13 @@ from langflow.services.database.models.knowledge_base import KnowledgeBaseRecord
 from langflow.services.deps import session_scope
 
 
+class _UnsetType:
+    """Sentinel for optional fields where ``None`` is a valid value."""
+
+
+_UNSET = _UnsetType()
+
+
 async def create_record(
     *,
     user_id: UUID,
@@ -148,7 +155,7 @@ async def update_stats(
     source_types: list[str] | None = None,
     chunk_size: int | None = None,
     chunk_overlap: int | None = None,
-    separator: str | None = None,
+    separator: str | None | _UnsetType = _UNSET,
 ) -> None:
     """Refresh the cached aggregates + chunker settings after an ingestion run.
 
@@ -175,7 +182,7 @@ async def update_stats(
             row.chunk_size = chunk_size
         if chunk_overlap is not None:
             row.chunk_overlap = chunk_overlap
-        if separator is not None:
+        if not isinstance(separator, _UnsetType):
             row.separator = separator
         row.updated_at = datetime.now(timezone.utc)
         session.add(row)

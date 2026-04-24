@@ -95,6 +95,21 @@ class TestUpdates:
         assert fetched.chunk_overlap == 64
         assert fetched.separator == "\n"
 
+    async def test_update_stats_can_clear_separator(self, active_user):
+        record = await knowledge_base_service.create_record(
+            user_id=active_user.id,
+            name="phase_15_kb_separator_clear",
+            embedding_provider="OpenAI",
+            embedding_model="m",
+            separator="\n",
+        )
+
+        await knowledge_base_service.update_stats(record.id, separator=None)
+
+        fetched = await knowledge_base_service.get_by_id(record.id)
+        assert fetched is not None
+        assert fetched.separator is None
+
     async def test_update_stats_missing_row_is_silent(self, active_user):  # noqa: ARG002
         import uuid
 
